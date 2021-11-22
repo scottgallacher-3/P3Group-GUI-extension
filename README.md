@@ -5,4 +5,4 @@ Now, users can design and process their inputs via a GUI built with python's `tk
 - More flexibility in creating input boundaries with a choice of shapes.
 - Better accuracy with improved control over positioning, size, and rotation of canvas shapes.
 - Accurate control of boundary conditions by direct setting of potential values, removing limitations of scaling based on RGB's 0-255 gradient.
-- Potential to operate input, processing of e-field calculation, and display outputs within one user-friendly location.
+- Possibility to operate input, processing of e-field calculation, and display outputs within one user-friendly location.
