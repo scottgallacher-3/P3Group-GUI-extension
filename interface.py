@@ -237,7 +237,10 @@ class GUI():
             try:
                 widget = self.window.winfo_containing(x,y)
                 if widget != self.window.focus_get():
-                    self.window.focus_set()
+                    #additional check so that this re-focusing doesn't apply to outputwindow
+                    #otherwise, will click through the top window and prevent usability
+                    if widget.winfo_toplevel() == ".":
+                        self.window.focus_set()
             except:  # - needed because winfo_containing has KeyError issues with dropdown
                 pass
             
@@ -722,6 +725,14 @@ class GUI():
         return
     
     
+    def save_output_plot(self):
+        #begin dialog box for general file saving, and capture the filename saved
+        self.savedfile = filedialog.asksaveasfilename(initialdir=os.getcwd(),
+                                                      defaultextension=".png",
+                                                      filetypes=[("PNG File", "*.png"), ("All Files", "*.*")])
+        return
+    
+    
     def plot(self, plot_type="initial"):
         #simplify plotting of arrays, with options to be shown with matplotlib
         
@@ -730,14 +741,11 @@ class GUI():
                    "\n"
                    "In order to view the desired plot, the canvas must first be processed.").format(plot_type)
         
-        if plot_type == "solution" and not hasattr(self, "final_potentials"):
-            print(err_msg)
-            plot_type = "initial"
-        elif plot_type == "field" and not hasattr(self, "Efield"):
+        if plot_type in ("solution","E_x","E_y","field") and not hasattr(self, "final_potentials"):
             print(err_msg)
             plot_type = "initial"
         
-        if plot_type in ["initial","mask","solution","field"]:
+        if plot_type in ["initial","mask","solution","E_x","E_y","field"]:
             self.styled_plot(plot_type)
         return
     
@@ -757,6 +765,20 @@ class GUI():
 
         elif plot_type == "solution":
             arr = self.final_potentials
+            current_cmap = cm.get_cmap("PRGn_r")
+            vmin = - np.nanmax(abs(arr))
+            vmax = + np.nanmax(abs(arr))
+            norm = Normalize(vmin,vmax)
+            
+        elif plot_type == "E_x":
+            arr = self.Efield[0]
+            current_cmap = cm.get_cmap("PRGn_r")
+            vmin = - np.nanmax(abs(arr))
+            vmax = + np.nanmax(abs(arr))
+            norm = Normalize(vmin,vmax)
+
+        elif plot_type == "E_y":
+            arr = self.Efield[1]
             current_cmap = cm.get_cmap("PRGn_r")
             vmin = - np.nanmax(abs(arr))
             vmax = + np.nanmax(abs(arr))
@@ -793,16 +815,19 @@ class GUI():
             x = np.arange(0, self.final_potentials.shape[1])
             y = np.arange(0, self.final_potentials.shape[0])
             X,Y = np.meshgrid(x,y)
-            E_mod = np.sqrt(self.Efield[0] ** 2 + self.Efield[1] ** 2)
-            lognorm = LogNorm(vmin=np.nanmin(E_mod)+1e-20, vmax=np.nanmax(E_mod))
-            nm = Normalize(np.nanmin(E_mod), np.nanmax(E_mod))
+#             E_mod = np.sqrt(self.Efield[0] ** 2 + self.Efield[1] ** 2)
+#             lognorm = LogNorm(vmin=np.nanmin(E_mod)+1e-20, vmax=np.nanmax(E_mod))
+#             nm = Normalize(np.nanmin(E_mod), np.nanmax(E_mod))
             sp = ax.streamplot(X,Y, *self.Efield, linewidth=0.5, density=1.5)#, norm=nm, color=E_mod**(4), cmap="RdBu")
     #         cb = plt.colorbar(sp.lines, shrink=0.8, aspect=25)
 
         if plot_type == "mask":
             cb.ax.yaxis.set_major_locator(plt.FixedLocator([0.25,0.75]))
             cb.ax.set_yticklabels(["Boundaries\n(Fixed\nPotential)","Background\nZeros"])
-        elif plot_type != "field":
+        elif plot_type in ("E_x", "E_y"):
+            cb.ax.yaxis.set_major_locator(plt.FixedLocator(cb.get_ticks()))
+            cb.ax.set_yticklabels(["+{0:.0f} V/m".format(i) if i > 0 else "{0:.0f} V/m".format(i) for i in cb.get_ticks()])
+        elif plot_type in ("initial", "solution"):
             cb.ax.yaxis.set_major_locator(plt.FixedLocator(cb.get_ticks()))
             cb.ax.set_yticklabels(["+{0:.0f} V".format(i) if i > 0 else "{0:.0f} V".format(i) for i in cb.get_ticks()])
 
