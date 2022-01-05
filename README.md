@@ -8,7 +8,7 @@ Now, users can design and process their inputs via a GUI built with python's `tk
 - Possibility to operate input, processing of E-field calculation, and display outputs within one user-friendly location.
 
 
-### Input and Solution Example
+### Input and Solution Example - Perturbed Parallel Plates
 
 #### Standard Interface:
 <p align="center">
