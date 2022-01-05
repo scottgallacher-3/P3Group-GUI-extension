@@ -8,6 +8,8 @@ from matplotlib.colors import LogNorm, Normalize
 from matplotlib.path import Path  # - for testing points within boundaries
 from tkinter import *  # - saves having to write extra "tk" every time throughout definition. (e.g. "tk.Button" -> "Button")
 from tkinter import ttk
+from tkinter import filedialog  # - "save as" window
+import os  # - filesystem access
 import matplotlib.image as mpimg  # - reading image to numpy array
 from PIL import Image  # - take image of canvas
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg  # - embed plots in window
@@ -692,7 +694,7 @@ class GUI():
             self.outputwindow.title("Calculated Electric Field")
             self.outputwindow.geometry("{0}x{1}+0+0".format(self.canvas_width + 200, self.canvas_height + 200))
 
-            self.savebutton = Button(self.outputwindow, text="Save Output Plot", bg="gainsboro", font=("Calibri",11), command = lambda: plt.savefig("Efield.png"))
+            self.savebutton = Button(self.outputwindow, text="Save Output Plot", bg="gainsboro", font=("Calibri",11), command = self.save_output_plot)
             self.savebutton.grid(row=2,column=1)
             self.savebutton["borderwidth"] = 0.5
             self.savebutton["relief"] = "ridge"
