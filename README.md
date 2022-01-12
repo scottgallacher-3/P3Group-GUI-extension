@@ -7,7 +7,7 @@ Now, users can design and process their inputs via a GUI built with python's `tk
 - Accurate control of boundary conditions by direct setting of potential values, removing limitations of scaling based on RGB's 0-255 gradient.
 - Possibility to operate input, processing of E-field calculation, and display outputs within one user-friendly location.
 
-The E-field solver can be launched very simply.
+The E-field solver can be launched very simply:
  - Running `solver.py` as a Python script.
  - Or via the following code in a Jupyter Notebook.
 ```
